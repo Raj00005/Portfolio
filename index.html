@@ -27,6 +27,61 @@
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
 
+  <style>
+    .music-widget {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 1000;
+      font-size: 13px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .music-widget .song-name {
+      font-weight: 500;
+    }
+
+    .music-widget .play-pause-btn {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 3px;
+      border-radius: 50%;
+      transition: background 0.3s ease;
+    }
+
+    .music-widget .play-pause-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .music-widget .volume-control {
+      width: 50px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .music-widget .volume-control::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 10px;
+      height: 10px;
+      background: white;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+  </style>
+
   <!-- =======================================================
   * Template Name: iPortfolio
   * Template URL: https://bootstrapmade.com/iportfolio-bootstrap-portfolio-websites-template/
@@ -37,10 +92,69 @@
 </head>
 
 <body class="index-page">
-  <audio controls>
-  <source src="https://github.com/Raj00005/Portfolio/blob/main/assets/img/Ordinary%20Person.mp3" type="audio/mp3">
-  Your browser does not support the audio element.
-</audio>
+  <audio id="backgroundMusic" autoplay loop style="display: none;">
+    <source src="assets/img/Ordinary Person.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <!-- Music Control Widget -->
+  <div class="music-widget">
+    <span class="song-name">Ordinary Person</span>
+    <button class="play-pause-btn" id="playPauseBtn">
+      <i class="bi bi-pause-fill"></i>
+    </button>
+    <input type="range" class="volume-control" id="volumeControl" min="0" max="1" step="0.1" value="0.5">
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const audio = document.getElementById('backgroundMusic');
+      const playPauseBtn = document.getElementById('playPauseBtn');
+      const volumeControl = document.getElementById('volumeControl');
+      
+      audio.volume = 0.5;
+      let isPlaying = false;
+      
+      function updateIcon() {
+        playPauseBtn.innerHTML = isPlaying ? '<i class="bi bi-pause-fill"></i>' : '<i class="bi bi-play-fill"></i>';
+      }
+      
+      playPauseBtn.addEventListener('click', function() {
+        if (isPlaying) {
+          audio.pause();
+        } else {
+          audio.play();
+        }
+      });
+      
+      volumeControl.addEventListener('input', function() {
+        audio.volume = this.value;
+      });
+      
+      audio.addEventListener('play', function() {
+        isPlaying = true;
+        updateIcon();
+      });
+      
+      audio.addEventListener('pause', function() {
+        isPlaying = false;
+        updateIcon();
+      });
+      
+      // Try autoplay
+      audio.play().then(() => {
+        isPlaying = true;
+        updateIcon();
+      }).catch(() => {
+        updateIcon();
+        document.addEventListener('click', function() {
+          if (!isPlaying) {
+            audio.play();
+          }
+        }, { once: true });
+      });
+    });
+  </script>
 
 
 
